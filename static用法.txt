@@ -1,0 +1,73 @@
+1.	static用法
+所修饰变量、函数均存储在静态存储区。
+(1)	static修饰局部变量、即静态局部变量。变量的类型，作用域不变，当程序运行至静态局部变量作用域外时，静态局部变量不被释放，在下一次通过函数调用该静态局部变量时，再次被使用。
+#include<iostream>
+void test(){
+		static int a = 0;
+		std::cout<<a++;
+}
+Int main(){
+		test();//cout<<0
+		//std::cout<<a; 此时a在作用域外，不可访问
+test();//cout<<1
+test();//cout<<2
+}
+(2)	static修饰全局变量、即静态全局变量。静态全局变量作用域为本cpp文件。该静态全局变量与其他cpp文件隔离。不同cpp文件可以定义同名静态全局变量。（相对的，不同cpp文件不能定义同名全局变量，会发生重定义）
+//a.cpp
+static int a ;
+//b.cpp
+Static int a;
+//没问题，a.cpp中的a与b.cpp中的a不是同一个变量
+
+//a.cpp
+int a;
+
+//b.cpp
+int a;
+//重定义
+
+//a.cpp
+int a = 3;
+
+//b.cpp
+extern int a;//a=3 ,即b.cpp中a与a.cpp中a是同一个 
+
+(3)	static修饰全局函数、即静态全局函数。静态全局函数作用域为本cpp文件。该静态全局函数与其他cpp文件隔离。不同cpp文件可以定义同名静态全局函数。（相对的，不同cpp文件不能定义同名全局函数，会发生重定义）//类似静态全局变量
+//a.h
+static void test();
+
+//b.cpp
+#include”a.h”
+static void test(){ std::cout<<”b.cpp”;}
+
+//c.cpp
+#include”a.h”
+
+//此时b.cpp中test()与c.cpp中test()不是同一个，因为static让test()在不同文件中隔离了、即c.cpp不能调用b.cpp中test()
+
+//a.h
+void test();
+
+//b.cpp
+#include”a.h”
+void test(){ std::cout<<”b.cpp”;}
+
+//c.cpp
+#include”a.h”
+
+//此时b.cpp中test()与c.cpp中test()是同一个，即c.cpp可以调用b.cpp中test()
+(4)	static修饰类的成员变量,即静态成员变量。类的所有对象共享同一个静态成员变量。
+静态成员变量在主程序执行时初始化，即在代码运行到类的代码之前，静态成员变量就已经初始化，所以静态成员变量要在类外初始化，分配内存早于类。
+（静态成员常量要在类内初始化，储存在只读变量区）
+(5)	static修饰类的成员函数,即静态成员函数。性质与静态成员变量类似。静态成员函数只能操作静态成员变量，不能操作非静态成员变量，因为静态成员函数不属于某个具体的对象，不能通过对象访问非静态成员变量。
+//a.cpp
+class A{
+public:
+		static int a;
+		int b;
+		static void test(){
+			std::cout<<a++;
+			//std::cout<<b++;错误
+}
+};
+int A::a=0;// 静态成员变量在类外初始化
